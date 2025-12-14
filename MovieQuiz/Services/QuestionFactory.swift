@@ -49,21 +49,12 @@ final class QuestionFactory: QuestionFactoryProtocol {
     ]
     
     func requestNextQuestion() {
-        // данный метод из учебника приводит к повтору вопросов в рамках одного раунда
-        /*
-        guard let index = (0..<questions.count).randomElement() else {
-            delegate?.didReceiveNextQuestion(question: nil)
-            return
-        }
-        let question = questions[safe: index]
-         */
-        
         let question = questions[safe: currentQuestionIndex]
-        if currentQuestionIndex == questions.count - 1 {
+        if currentQuestionIndex < questions.count - 1 {
+            currentQuestionIndex += 1
+        } else {
             currentQuestionIndex = 0
             questions.shuffle()
-        } else {
-            currentQuestionIndex += 1
         }
         delegate?.didReceiveNextQuestion(question: question)
     }

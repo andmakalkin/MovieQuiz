@@ -65,9 +65,8 @@ extension StatisticService: StatisticServiceProtocol {
         gamesCount += 1
         totalCorrectAnswers += count
         totalQuestionsAsked += amount
-        let currentGameResult = GameResult(correct: count, total: amount, date: Date())
         
-        // Если рассмотреть случай, что в первой игре пользователь наберёт 0 очков, то bestGame не обновится и алерт покажет рекорд 0/0, потому что bestGame.total дефолтно проинициализируется нулём. Поэтому введена дополнительная проверка, которая запишет данную игру в bestGame и рекорд отобразится как 0/10
+        let currentGameResult = GameResult(correct: count, total: amount, date: Date())
         if currentGameResult.isBetterThan(bestGame) || (bestGame.correct == 0 && gamesCount == 1) {
             bestGame = currentGameResult
         }

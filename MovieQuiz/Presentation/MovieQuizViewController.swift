@@ -93,7 +93,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
             self.showNextQuestionOrResults()
-            self.imageView.layer.borderWidth = 0
             self.yesButton.isEnabled = true
             self.noButton.isEnabled = true
         }
@@ -101,13 +100,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            guard let titleMessage = setTitleMessage(correct: correctAnswers) else { return }
             statisticService?.store(correct: correctAnswers, total: questionsAmount)
-            guard let quizResults = setQuizResultsViewModel(with: titleMessage) else { return }
+            guard let quizResults = setQuizResultsViewModel() else { return }
             showAlert(result: quizResults)
         } else {
             currentQuestionIndex += 1
             questionFactory?.requestNextQuestion()
+            imageView.layer.borderWidth = 0
         }
     }
     
@@ -117,6 +116,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
         let model = AlertModel(title: result.title, message: result.text, buttonText: result.buttonText) { [weak self] in
             guard let self = self else { return }
+            self.imageView.layer.borderWidth = 0
             self.backgroundForAlertView.alpha = 0
             self.restartGame()
         }
@@ -129,13 +129,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         questionFactory?.requestNextQuestion()
     }
     
-    private func setQuizResultsViewModel(with titleMessage: String) -> QuizResultsViewModel? {
+    private func setQuizResultsViewModel() -> QuizResultsViewModel? {
         guard let gamesCount = statisticService?.gamesCount else { return nil }
         guard let bestGame = statisticService?.bestGame else { return nil }
         guard let totalAccuracy = statisticService?.totalAccuracy else { return nil }
         
         let quizResults = QuizResultsViewModel(
-            title: titleMessage,
             text: """
             Ваш результат: \(correctAnswers)/\(questionsAmount)
             Количество сыгранных квизов: \(gamesCount)
@@ -143,17 +142,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             Средняя точность: \(String(format: "%.2f", totalAccuracy))% 
             """)
         return quizResults
-    }
-    
-    private func setTitleMessage(correct count: Int) -> String? {
-        guard let bestGame = statisticService?.bestGame else { return nil }
-        if count == 0 {
-            return "Ура! Антирекорд!"
-        }
-        if count == bestGame.correct {
-            return "Рекорд повторен!"
-        }
-        return count < bestGame.correct ? "Этот раунд окончен!" : "Ура! Новый рекорд!"
     }
     
     // MARK: - IB Actions
