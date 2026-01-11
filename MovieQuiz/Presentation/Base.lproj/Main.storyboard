@@ -117,6 +117,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <color key="backgroundColor" name="YP Background"/>
                             </view>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="LI7-Bl-DzP">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="dgL-6f-4SM"/>
                         <color key="backgroundColor" name="YP Black"/>
@@ -124,14 +127,17 @@
                             <constraint firstItem="f8R-VW-lCQ" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="05M-E8-T6E"/>
                             <constraint firstItem="tS7-U1-kxZ" firstAttribute="bottom" secondItem="dgL-6f-4SM" secondAttribute="bottom" id="0W8-F4-GJl"/>
                             <constraint firstItem="dgL-6f-4SM" firstAttribute="trailing" secondItem="tS7-U1-kxZ" secondAttribute="trailing" constant="20" id="92k-sA-s1H"/>
+                            <constraint firstItem="LI7-Bl-DzP" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Fr8-tD-VaQ"/>
                             <constraint firstItem="f8R-VW-lCQ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="NIm-nm-s2O"/>
                             <constraint firstItem="f8R-VW-lCQ" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" id="Oxl-GD-MUF"/>
+                            <constraint firstItem="LI7-Bl-DzP" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="QDY-wA-dsV"/>
                             <constraint firstAttribute="top" secondItem="f8R-VW-lCQ" secondAttribute="top" id="RLs-C2-sp2"/>
                             <constraint firstItem="tS7-U1-kxZ" firstAttribute="leading" secondItem="dgL-6f-4SM" secondAttribute="leading" constant="20" id="dbJ-v4-3Z8"/>
                             <constraint firstItem="tS7-U1-kxZ" firstAttribute="top" secondItem="dgL-6f-4SM" secondAttribute="top" constant="10" id="gd8-ph-nsk"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="LI7-Bl-DzP" id="jJd-RL-DXR"/>
                         <outlet property="backgroundForAlertView" destination="f8R-VW-lCQ" id="OHh-FF-afT"/>
                         <outlet property="counterLabel" destination="2Ep-vS-2OE" id="J2Y-4x-pzr"/>
                         <outlet property="imageView" destination="hDT-tx-kNT" id="2sE-2c-5R4"/>

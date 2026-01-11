@@ -13,6 +13,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var backgroundForAlertView: UIView!
     
+    @IBOutlet weak private var activityIndicator: UIActivityIndicatorView!
+    
     // MARK: - Private Properties
     
     private let questionsAmount = 10
@@ -28,14 +30,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        showLoadingIndicator()
+        
         statisticService = StatisticService()
         alertPresenter = AlertPresenter()
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         
-        let questionFactory = QuestionFactory()
-        questionFactory.delegate = self
-        self.questionFactory = questionFactory
-        self.questionFactory?.requestNextQuestion()
+        questionFactory?.loadData()
     }
     
     // MARK: - QuestionFactoryDelegate
@@ -53,11 +54,24 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
+    func didFailToLoadData(with error: Error) {
+        print(error.localizedDescription)
+        showNetworkError()
+    }
+    
+    func didLoadDataFromServer() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            activityIndicator.isHidden = true
+        }
+        questionFactory?.requestNextQuestion()
+    }
+    
     // MARK: - Private Methods
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
-            image: UIImage(named: model.image) ?? UIImage(),
+            image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
         return questionStep
@@ -142,6 +156,38 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             Средняя точность: \(String(format: "%.2f", totalAccuracy))% 
             """)
         return quizResults
+    }
+    
+    private func showLoadingIndicator() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            activityIndicator.isHidden = false
+            activityIndicator.startAnimating()
+        }
+    }
+    
+    private func hideLoadingIndicator() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.activityIndicator.isHidden = true
+            self.activityIndicator.stopAnimating()
+        }
+    }
+    
+    private func showNetworkError() {
+        hideLoadingIndicator()
+        
+        let model = AlertModel(title: "Что-то пошло не так(",
+                               message: "Невозможно загрузить данные",
+                               buttonText: "Попробовать ещё раз") { [weak self] in
+            guard let self = self else { return }
+            
+            self.showLoadingIndicator()
+            self.questionFactory?.loadData()
+        }
+        
+        alertPresenter?.show(in: self, model: model)
+        
     }
     
     // MARK: - IB Actions
