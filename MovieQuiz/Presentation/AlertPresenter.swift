@@ -1,20 +1,31 @@
 import UIKit
 
+// MARK: - AlertPresenter
+
 final class AlertPresenter: AlertPresenterProtocol {
-    func show(in vc: UIViewController, model: AlertModel) {
+
+    // MARK: - Public Methods
+
+    func show(in viewController: UIViewController, model: AlertModel) {
         DispatchQueue.main.async {
-            let alert = UIAlertController(
-                title: model.title,
-                message: model.message,
-                preferredStyle: .alert)
-            
-            let action = UIAlertAction(title: model.buttonText, style: .default) { _ in
-                model.completion()
-            }
-            
-            alert.addAction(action)
-            
-            vc.present(alert, animated: true, completion: nil)
+            self.presentAlert(in: viewController, model: model)
         }
+    }
+
+    // MARK: - Private Methods
+
+    private func presentAlert(in viewController: UIViewController, model: AlertModel) {
+        let alertController = UIAlertController(
+            title: model.title,
+            message: model.message,
+            preferredStyle: .alert
+        )
+
+        let action = UIAlertAction(title: model.buttonText, style: .default) { _ in
+            model.completion()
+        }
+
+        alertController.addAction(action)
+        viewController.present(alertController, animated: true)
     }
 }
