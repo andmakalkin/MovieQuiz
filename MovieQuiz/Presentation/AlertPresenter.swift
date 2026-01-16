@@ -24,8 +24,8 @@ final class AlertPresenter: AlertPresenterProtocol {
         let action = UIAlertAction(title: model.buttonText, style: .default) { _ in
             model.completion()
         }
-
         alertController.addAction(action)
+        alertController.view.accessibilityIdentifier = "Alert"
         viewController.present(alertController, animated: true)
     }
 }
